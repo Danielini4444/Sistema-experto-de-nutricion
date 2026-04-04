@@ -1,0 +1,889 @@
+{
+  "metadata": {
+    "nombre": "Base de Conocimiento — Sistema Experto de Nutrición (México)",
+    "version": "1.0.0",
+    "fecha_compilacion": "2026-04-03",
+    "autor": "Compilado por sistema IA a partir de fuentes oficiales",
+    "descripcion": "Base de conocimiento estructurada para un sistema experto capaz de generar recomendaciones nutricionales y dietas automáticas, contextualizada para la población mexicana.",
+    "fuentes": [
+      {
+        "id": "ENSANUT",
+        "nombre": "Encuesta Nacional de Salud y Nutrición Continua 2020-2024",
+        "institucion": "Instituto Nacional de Salud Pública (INSP)",
+        "url": "https://ensanut.insp.mx/",
+        "descripcion": "Encuestas anuales probabilísticas con >50,000 hogares y 53,600 adultos. 145 indicadores de salud y nutrición con representatividad estatal."
+      },
+      {
+        "id": "INEGI_ENIGH",
+        "nombre": "Encuesta Nacional de Ingresos y Gastos de los Hogares (ENIGH)",
+        "institucion": "Instituto Nacional de Estadística y Geografía (INEGI)",
+        "url": "https://www.inegi.org.mx/",
+        "descripcion": "Datos sobre gasto alimentario, disponibilidad y capacidad de compra de alimentos por sector poblacional."
+      },
+      {
+        "id": "NOM_043",
+        "nombre": "NOM-043-SSA2-2012",
+        "institucion": "Secretaría de Salud, México",
+        "url": "https://dof.gob.mx/nota_detalle.php?codigo=5285372",
+        "descripcion": "Norma Oficial Mexicana para orientación alimentaria: criterios, grupos de alimentos (Plato del Bien Comer) y recomendaciones por grupo etario."
+      },
+      {
+        "id": "CONADE_CNAR",
+        "nombre": "Lineamientos de Nutrición Deportiva CONADE/CNAR",
+        "institucion": "Comisión Nacional de Cultura Física y Deporte",
+        "url": "https://www.gob.mx/conade",
+        "descripcion": "Protocolos de nutrición para deportistas de alto rendimiento, platos nutricionales (entrenamiento ligero, moderado, competencia)."
+      },
+      {
+        "id": "SMAE",
+        "nombre": "Sistema Mexicano de Alimentos Equivalentes, 4ª edición",
+        "institucion": "Fomento de Nutrición y Salud, A.C.",
+        "autores": "Pérez Lizaur AB, Palacios González B, Castro Becerra AL, Flores Galicia I",
+        "url": "https://fns.org.mx/",
+        "descripcion": "Sistema de equivalentes alimentarios para diseño de planes de alimentación. 8 grupos de alimentos con aporte nutrimental promedio por equivalente."
+      },
+      {
+        "id": "FAO_OMS_UNU",
+        "nombre": "Human Energy Requirements (FAO/WHO/UNU 2004)",
+        "institucion": "FAO, OMS, Universidad de las Naciones Unidas",
+        "url": "http://www.fao.org/docrep/007/y5686e/y5686e00.htm",
+        "descripcion": "Ecuaciones para estimación de gasto energético basal y total. Factores de actividad física. Requerimientos por grupo etario."
+      },
+      {
+        "id": "USDA_FDC",
+        "nombre": "USDA FoodData Central",
+        "institucion": "U.S. Department of Agriculture",
+        "url": "https://fdc.nal.usda.gov/",
+        "licencia": "CC0 1.0 — Dominio público",
+        "descripcion": "Base de composición de alimentos con valores de nutrientes por 100g de porción comestible. API REST disponible."
+      },
+      {
+        "id": "DRI_IOM",
+        "nombre": "Dietary Reference Intakes (DRIs)",
+        "institucion": "Food and Nutrition Board, Institute of Medicine, National Academies (EE.UU./Canadá)",
+        "url": "https://ods.od.nih.gov/HealthInformation/nutrientrecommendations.aspx",
+        "descripcion": "Valores de referencia: RDA, AI, UL, EAR y AMDR para macro y micronutrientes por grupo etario y sexo."
+      },
+      {
+        "id": "CONEVAL",
+        "nombre": "Diagnóstico de Alimentación 2024",
+        "institucion": "Consejo Nacional de Evaluación de la Política de Desarrollo Social",
+        "url": "https://www.coneval.org.mx/",
+        "descripcion": "Datos sobre inseguridad alimentaria y pobreza laboral en México."
+      }
+    ]
+  },
+
+  "contexto_epidemiologico_mexico": {
+    "fuente": "ENSANUT Continua 2020-2024, ENSANUT 2022, ENSANUT 2023",
+    "nota": "Datos más recientes disponibles. Las prevalencias son porcentajes de la población adulta (≥20 años) salvo indicación.",
+    "prevalencias_adultos": {
+      "sobrepeso": {
+        "total_pct": 38.3,
+        "hombres_pct": 41.2,
+        "mujeres_pct": 35.8,
+        "criterio": "IMC 25.0–29.9 kg/m²"
+      },
+      "obesidad": {
+        "total_pct": 36.9,
+        "hombres_pct": 32.3,
+        "mujeres_pct": 41.0,
+        "criterio": "IMC ≥30.0 kg/m²",
+        "grado_I": "IMC 30.0–34.9",
+        "grado_II": "IMC 35.0–39.9",
+        "grado_III": "IMC ≥40.0"
+      },
+      "obesidad_abdominal": {
+        "total_pct": 81.0,
+        "hombres_pct": 73.0,
+        "mujeres_pct": 87.0,
+        "criterio_hombres": "Circunferencia de cintura >90 cm",
+        "criterio_mujeres": "Circunferencia de cintura >80 cm"
+      },
+      "sobrepeso_obesidad_combinado_pct": 75.2,
+      "diabetes_tipo_2": {
+        "total_pct": 17.0,
+        "diagnosticada_pct": 11.6,
+        "no_diagnosticada_pct": 5.4,
+        "control_glucemico_pct": 33.0,
+        "en_tratamiento_farmacologico_pct": 90.9,
+        "fuente": "ENSANUT Continua 2021-2024"
+      },
+      "prediabetes_pct": 22.1,
+      "hipertension_arterial": {
+        "total_pct": 47.0,
+        "desconocen_diagnostico_pct": 65.0,
+        "control_adecuado_pct": 33.0,
+        "criterio": "Presión arterial ≥130/80 mmHg"
+      }
+    },
+    "prevalencias_ninos_adolescentes": {
+      "sobrepeso_obesidad_5_a_11_pct": 37.3,
+      "sobrepeso_obesidad_adolescentes_pct": 41.1
+    },
+    "inseguridad_alimentaria": {
+      "algun_grado_pct": 50.0,
+      "leve_pct": 24.9,
+      "moderada_pct": 14.6,
+      "severa_pct": 10.5,
+      "fuente": "ENSANUT / CONEVAL"
+    },
+    "disponibilidad_energetica": {
+      "kcal_por_habitante_dia": 3278,
+      "fuente": "FAO Balance Sheets 2023 (datos 2021)"
+    },
+    "riesgos_asociados_obesidad": {
+      "diabetes_RM": 1.7,
+      "hipertension_RM": 3.6,
+      "dislipidemia_RM": 2.3,
+      "nota": "RM = Razón de momios comparada con IMC normal"
+    }
+  },
+
+  "normativa_mexicana": {
+    "NOM_043_SSA2_2012": {
+      "titulo": "Servicios básicos de salud. Promoción y educación para la salud en materia alimentaria.",
+      "principios_dieta_correcta": {
+        "completa": "Contiene todos los nutrimentos. Incluir en cada comida alimentos de los tres grupos.",
+        "equilibrada": "Los nutrimentos guardan las proporciones apropiadas entre sí.",
+        "inocua": "Su consumo habitual no implica riesgos para la salud.",
+        "suficiente": "Cubre las necesidades de todos los nutrimentos para mantener la salud.",
+        "variada": "Incluye diferentes alimentos de cada grupo en las comidas.",
+        "adecuada": "Acorde con los gustos, cultura y recursos económicos, sin sacrificar calidad."
+      },
+      "plato_del_bien_comer": {
+        "descripcion": "Herramienta gráfica oficial de orientación alimentaria en México.",
+        "grupos": [
+          {
+            "grupo": "Verduras y Frutas",
+            "color": "verde",
+            "proporcion": "muchas",
+            "funcion_principal": "Aportan vitaminas A y C, ácido fólico, fibra dietética, minerales.",
+            "ejemplos_verduras": ["acelgas", "verdolagas", "quelites", "espinacas", "nopales", "brócoli", "calabaza", "chayote", "jitomate", "zanahoria", "aguacate", "chile poblano"],
+            "ejemplos_frutas": ["guayaba", "papaya", "melón", "naranja", "plátano", "manzana", "fresa", "mango", "mamey"]
+          },
+          {
+            "grupo": "Cereales y Tubérculos",
+            "color": "amarillo",
+            "proporcion": "suficientes",
+            "funcion_principal": "Fuente principal de energía (carbohidratos complejos), fibra y algunas vitaminas del complejo B.",
+            "ejemplos": ["maíz", "tortilla", "trigo", "avena", "arroz", "amaranto", "centeno", "cebada", "papa", "camote", "bolillo", "pan integral"]
+          },
+          {
+            "grupo": "Leguminosas y Alimentos de Origen Animal",
+            "color": "rojo",
+            "proporcion": "pocos",
+            "funcion_principal": "Aportan proteínas, hierro, grasas, vitaminas (especialmente B12 en AOA) y minerales.",
+            "ejemplos_leguminosas": ["frijol", "lenteja", "habas", "garbanzo", "chícharo seco", "soya", "alubia"],
+            "ejemplos_AOA": ["leche", "queso", "yogurt", "huevo", "pescado", "pollo", "carne de res", "carne de cerdo"]
+          }
+        ]
+      },
+      "recomendaciones_generales": [
+        "Incluir al menos un alimento de cada grupo en cada comida.",
+        "Variar los alimentos de una comida a otra.",
+        "Tomar abundante agua simple potable.",
+        "Consumir lo menos posible grasas, aceites, azúcar, edulcorantes y sal.",
+        "Comer tranquilo, en compañía, de preferencia en familia.",
+        "Consumir alimentos de acuerdo con las necesidades individuales."
+      ],
+      "grupos_vulnerables": [
+        "Niños desde gestación hasta pubertad",
+        "Mujeres embarazadas",
+        "Mujeres en periodo de lactancia",
+        "Adultos mayores",
+        "Personas con actividad física intensa"
+      ],
+      "comidas_recomendadas_dia": {
+        "principales": 3,
+        "colaciones": 2,
+        "nota": "Especialmente importante en niños, embarazadas y deportistas."
+      }
+    }
+  },
+
+  "sistema_mexicano_alimentos_equivalentes": {
+    "fuente": "SMAE, 4ª ed. (Pérez Lizaur et al., 2014)",
+    "concepto": "Un alimento equivalente es aquella porción cuyo aporte nutrimental es similar a los de su mismo grupo y subgrupo, permitiendo intercambio.",
+    "base_calculo": "Peso neto sin cáscara, semillas ni huesos. Peso de alimentos cocidos cuando aplica.",
+    "grupos": [
+      {
+        "grupo": "Verduras",
+        "energia_kcal": 25,
+        "proteina_g": 2,
+        "lipidos_g": 0,
+        "hidratos_carbono_g": 4,
+        "componente_clave": "4g de hidratos de carbono",
+        "ejemplo_1_equivalente": "1/2 taza de brócoli cocido, 1 taza de lechuga"
+      },
+      {
+        "grupo": "Frutas",
+        "energia_kcal": 60,
+        "proteina_g": 0,
+        "lipidos_g": 0,
+        "hidratos_carbono_g": 15,
+        "componente_clave": "15g de hidratos de carbono",
+        "ejemplo_1_equivalente": "1 pieza mediana de manzana (105g), 1/2 plátano"
+      },
+      {
+        "grupo": "Cereales y Tubérculos",
+        "subgrupos": [
+          {
+            "subgrupo": "sin grasa",
+            "energia_kcal": 70,
+            "proteina_g": 2,
+            "lipidos_g": 0,
+            "hidratos_carbono_g": 15,
+            "ejemplo": "1 tortilla, 1/2 bolillo, 1/3 taza de arroz cocido"
+          },
+          {
+            "subgrupo": "con grasa",
+            "energia_kcal": 115,
+            "proteina_g": 2,
+            "lipidos_g": 5,
+            "hidratos_carbono_g": 15,
+            "ejemplo": "1/3 de oreja de pan dulce, 6 galletas marías"
+          }
+        ]
+      },
+      {
+        "grupo": "Leguminosas",
+        "energia_kcal": 120,
+        "proteina_g": 8,
+        "lipidos_g": 1,
+        "hidratos_carbono_g": 20,
+        "ejemplo_1_equivalente": "1/2 taza de frijol cocido, 1/2 taza de lenteja cocida"
+      },
+      {
+        "grupo": "Alimentos de Origen Animal (AOA)",
+        "subgrupos": [
+          {
+            "subgrupo": "muy bajo en grasa",
+            "energia_kcal": 40,
+            "proteina_g": 7,
+            "lipidos_g": 1,
+            "hidratos_carbono_g": 0,
+            "ejemplo": "30g de pechuga de pollo sin piel"
+          },
+          {
+            "subgrupo": "bajo en grasa",
+            "energia_kcal": 55,
+            "proteina_g": 7,
+            "lipidos_g": 3,
+            "hidratos_carbono_g": 0,
+            "ejemplo": "30g de atún en agua"
+          },
+          {
+            "subgrupo": "moderado en grasa",
+            "energia_kcal": 75,
+            "proteina_g": 7,
+            "lipidos_g": 5,
+            "hidratos_carbono_g": 0,
+            "ejemplo": "1 huevo, 30g de carne de res magra"
+          },
+          {
+            "subgrupo": "alto en grasa",
+            "energia_kcal": 100,
+            "proteina_g": 7,
+            "lipidos_g": 8,
+            "hidratos_carbono_g": 0,
+            "ejemplo": "30g de carne con grasa visible"
+          }
+        ]
+      },
+      {
+        "grupo": "Leche",
+        "subgrupos": [
+          {
+            "subgrupo": "descremada",
+            "energia_kcal": 95,
+            "proteina_g": 9,
+            "lipidos_g": 2,
+            "hidratos_carbono_g": 12
+          },
+          {
+            "subgrupo": "semidescremada",
+            "energia_kcal": 110,
+            "proteina_g": 9,
+            "lipidos_g": 4,
+            "hidratos_carbono_g": 12
+          },
+          {
+            "subgrupo": "entera",
+            "energia_kcal": 150,
+            "proteina_g": 9,
+            "lipidos_g": 8,
+            "hidratos_carbono_g": 12
+          },
+          {
+            "subgrupo": "con azúcar",
+            "energia_kcal": 200,
+            "proteina_g": 8,
+            "lipidos_g": 5,
+            "hidratos_carbono_g": 30
+          }
+        ]
+      },
+      {
+        "grupo": "Aceites y Grasas",
+        "subgrupos": [
+          {
+            "subgrupo": "sin proteína",
+            "energia_kcal": 45,
+            "proteina_g": 0,
+            "lipidos_g": 5,
+            "hidratos_carbono_g": 0,
+            "ejemplo": "1 cucharadita de aceite vegetal"
+          },
+          {
+            "subgrupo": "con proteína",
+            "energia_kcal": 70,
+            "proteina_g": 3,
+            "lipidos_g": 5,
+            "hidratos_carbono_g": 3,
+            "ejemplo": "10 piezas de cacahuate, 14 piezas de almendras"
+          }
+        ]
+      },
+      {
+        "grupo": "Azúcares",
+        "subgrupos": [
+          {
+            "subgrupo": "sin grasa",
+            "energia_kcal": 40,
+            "proteina_g": 0,
+            "lipidos_g": 0,
+            "hidratos_carbono_g": 10,
+            "ejemplo": "2 cucharaditas de azúcar, 1 cucharadita de miel"
+          },
+          {
+            "subgrupo": "con grasa",
+            "energia_kcal": 85,
+            "proteina_g": 0,
+            "lipidos_g": 5,
+            "hidratos_carbono_g": 10,
+            "ejemplo": "1 cucharada de chocolate en polvo"
+          }
+        ]
+      },
+      {
+        "grupo": "Alimentos libres en energía",
+        "descripcion": "Alimentos con aporte calórico despreciable por porción habitual",
+        "ejemplos": ["café sin azúcar", "té sin azúcar", "agua mineral", "caldo desgrasado", "especias", "chile", "limón", "vinagre", "hierbas de olor", "mostaza"]
+      }
+    ]
+  },
+
+  "calculo_requerimientos_energeticos": {
+    "descripcion": "Fórmulas y factores para estimar el Gasto Energético Total (GET) individual.",
+    "ecuaciones_gasto_energetico_basal": {
+      "harris_benedict": {
+        "hombres": "66.47 + (13.75 × Peso_kg) + (5.0 × Talla_cm) − (6.74 × Edad_años)",
+        "mujeres": "655.1 + (9.56 × Peso_kg) + (1.85 × Talla_cm) − (4.68 × Edad_años)",
+        "unidad": "kcal/día",
+        "precision": "±19% vs. calorimetría indirecta"
+      },
+      "FAO_OMS_UNU_1985": {
+        "hombres": {
+          "10_17": "(17.5 × Peso_kg) + 651",
+          "18_29": "(15.3 × Peso_kg) + 679",
+          "30_59": "(11.6 × Peso_kg) + 879",
+          "60_plus": "(13.5 × Peso_kg) + 487"
+        },
+        "mujeres": {
+          "10_17": "(12.2 × Peso_kg) + 746",
+          "18_29": "(14.7 × Peso_kg) + 496",
+          "30_59": "(8.7 × Peso_kg) + 829",
+          "60_plus": "(10.5 × Peso_kg) + 596"
+        },
+        "unidad": "kcal/día"
+      },
+      "mifflin_st_jeor": {
+        "hombres": "(10 × Peso_kg) + (6.25 × Talla_cm) − (5 × Edad_años) + 5",
+        "mujeres": "(10 × Peso_kg) + (6.25 × Talla_cm) − (5 × Edad_años) − 161",
+        "unidad": "kcal/día",
+        "nota": "Considerada más precisa para población con sobrepeso/obesidad."
+      }
+    },
+    "factores_actividad_fisica_FAO": {
+      "sedentario": {
+        "hombres": 1.55,
+        "mujeres": 1.56,
+        "descripcion": "Actividades de la vida diaria, sin ejercicio adicional."
+      },
+      "ligera": {
+        "hombres": 1.55,
+        "mujeres": 1.56,
+        "descripcion": "Oficina, caminar poco, tareas ligeras del hogar."
+      },
+      "moderada": {
+        "hombres": 1.78,
+        "mujeres": 1.64,
+        "descripcion": "Caminata regular, tareas domésticas pesadas, trabajo de pie. 60 min/día actividad moderada."
+      },
+      "intensa": {
+        "hombres": 2.10,
+        "mujeres": 1.82,
+        "descripcion": "Ejercicio vigoroso diario, trabajos pesados, atletas en entrenamiento."
+      }
+    },
+    "formula_GET": "GET = GEB × Factor_Actividad_Física",
+    "ajuste_obesidad": {
+      "formula_peso_corregido": "Peso_corregido = (Peso_real − Peso_ideal) × 0.25 + Peso_ideal",
+      "nota": "Usar peso corregido en las fórmulas para evitar sobreestimación en obesos."
+    },
+    "perdida_peso": {
+      "deficit_recomendado_kcal_semana": "3500–7000",
+      "perdida_recomendada_kg_semana": "0.5–1.0",
+      "nota": "Pérdidas mayores a 1 kg/semana se asocian a desajustes hormonales y fisiológicos."
+    },
+    "estimaciones_rapidas_kcal_dia": {
+      "nota": "Basadas en Dietary Guidelines for Americans 2020-2025. Valores para peso y talla promedio.",
+      "mujeres": {
+        "19_25_sedentaria": 2000,
+        "19_25_mod_activa": 2200,
+        "19_25_activa": 2400,
+        "26_50_sedentaria": 1800,
+        "26_50_mod_activa": 2000,
+        "26_50_activa": 2200,
+        "51_plus_sedentaria": 1600,
+        "51_plus_mod_activa": 1800,
+        "51_plus_activa": 2000
+      },
+      "hombres": {
+        "19_25_sedentario": 2400,
+        "19_25_mod_activo": 2800,
+        "19_25_activo": 3000,
+        "26_45_sedentario": 2400,
+        "26_45_mod_activo": 2600,
+        "26_45_activo": 3000,
+        "46_65_sedentario": 2200,
+        "46_65_mod_activo": 2400,
+        "46_65_activo": 2800,
+        "66_plus_sedentario": 2000,
+        "66_plus_mod_activo": 2200,
+        "66_plus_activo": 2600
+      }
+    }
+  },
+
+  "distribucion_macronutrientes": {
+    "fuente": "DRI (IOM/National Academies) + FAO/OMS",
+    "AMDR_adultos": {
+      "carbohidratos_pct": { "min": 45, "max": 65, "kcal_por_gramo": 4 },
+      "proteinas_pct": { "min": 10, "max": 35, "kcal_por_gramo": 4 },
+      "lipidos_pct": { "min": 20, "max": 35, "kcal_por_gramo": 9 }
+    },
+    "distribucion_tipica_equilibrada": {
+      "carbohidratos_pct": 55,
+      "proteinas_pct": 15,
+      "lipidos_pct": 30
+    },
+    "perfil_lipidico_recomendado": {
+      "AGS_max_pct_energia": 10,
+      "AGM_pct_energia": "15–20",
+      "AGP_pct_energia": "6–10",
+      "omega6_omega3_ratio_ideal": "5:1 a 10:1",
+      "EPA_DHA_g_dia": "0.25–0.5",
+      "AG_trans_max_pct_energia": 1,
+      "colesterol_max_mg_dia": 300
+    },
+    "fibra_dietetica": {
+      "recomendacion_adultos_g_dia": 25,
+      "recomendacion_hombres_AI_g_dia": 38,
+      "recomendacion_mujeres_AI_g_dia": 25,
+      "nota": "14g de fibra por cada 1000 kcal consumidas."
+    },
+    "agua": {
+      "hombres_AI_litros_dia": 3.7,
+      "mujeres_AI_litros_dia": 2.7,
+      "nota": "Incluye agua de alimentos y bebidas. La NOM-043 recomienda agua simple potable como fuente principal."
+    }
+  },
+
+  "requerimientos_proteicos_especificos": {
+    "fuente": "DRI + FAO/OMS + Evidencia deportiva",
+    "poblacion_general_g_por_kg": 0.8,
+    "adultos_mayores_g_por_kg": "1.0–1.2",
+    "embarazadas_extra_g_dia": 25,
+    "lactancia_extra_g_dia": 25,
+    "deportistas": {
+      "resistencia_mantenimiento": "1.2–1.4",
+      "fuerza_mantenimiento": "1.2–1.4",
+      "fuerza_ganancia_muscular": "1.6–2.2",
+      "deportes_intermitentes": "1.4–1.7",
+      "unidad": "g/kg/día",
+      "nota": "El desarrollo muscular depende principalmente del entrenamiento, no solo de la ingesta proteica."
+    }
+  },
+
+  "micronutrientes_DRI": {
+    "fuente": "IOM/National Academies — DRI Tables",
+    "nota": "RDA en negritas, AI marcados con asterisco (*). Valores para adultos 19-50 años salvo indicación.",
+    "vitaminas": {
+      "vitamina_A": { "hombres_ug_RAE": 900, "mujeres_ug_RAE": 700, "UL_ug": 3000 },
+      "vitamina_C": { "hombres_mg": 90, "mujeres_mg": 75, "UL_mg": 2000, "fumadores_extra_mg": 35 },
+      "vitamina_D": { "adultos_ug": 15, "mayores_70_ug": 20, "UL_ug": 100, "nota": "1 µg = 40 UI" },
+      "vitamina_E": { "adultos_mg_alfa_tocoferol": 15, "UL_mg": 1000 },
+      "vitamina_K": { "hombres_ug_AI": 120, "mujeres_ug_AI": 90 },
+      "tiamina_B1": { "hombres_mg": 1.2, "mujeres_mg": 1.1 },
+      "riboflavina_B2": { "hombres_mg": 1.3, "mujeres_mg": 1.1 },
+      "niacina_B3": { "hombres_mg_NE": 16, "mujeres_mg_NE": 14, "UL_mg": 35 },
+      "vitamina_B6": { "adultos_19_50_mg": 1.3, "hombres_51_plus_mg": 1.7, "mujeres_51_plus_mg": 1.5, "UL_mg": 100 },
+      "folato_B9": { "adultos_ug_DFE": 400, "embarazadas_ug_DFE": 600, "lactancia_ug_DFE": 500, "UL_ug": 1000 },
+      "vitamina_B12": { "adultos_ug": 2.4, "embarazadas_ug": 2.6, "lactancia_ug": 2.8 },
+      "acido_pantotenico_B5": { "adultos_mg_AI": 5 },
+      "biotina_B7": { "adultos_ug_AI": 30 },
+      "colina": { "hombres_mg_AI": 550, "mujeres_mg_AI": 425, "UL_mg": 3500 }
+    },
+    "minerales": {
+      "calcio": { "adultos_19_50_mg": 1000, "mujeres_51_plus_mg": 1200, "hombres_51_70_mg": 1000, "hombres_71_plus_mg": 1200, "UL_mg": 2500 },
+      "hierro": { "hombres_mg": 8, "mujeres_premenopausicas_mg": 18, "mujeres_postmenopausicas_mg": 8, "embarazadas_mg": 27, "UL_mg": 45 },
+      "magnesio": { "hombres_19_30_mg": 400, "hombres_31_plus_mg": 420, "mujeres_19_30_mg": 310, "mujeres_31_plus_mg": 320, "UL_mg_suplemento": 350 },
+      "zinc": { "hombres_mg": 11, "mujeres_mg": 8, "embarazadas_mg": 11, "UL_mg": 40 },
+      "selenio": { "adultos_ug": 55, "UL_ug": 400 },
+      "yodo": { "adultos_ug": 150, "embarazadas_ug": 220, "lactancia_ug": 290, "UL_ug": 1100 },
+      "fosforo": { "adultos_mg": 700, "UL_mg": 4000 },
+      "potasio": { "hombres_mg_AI": 3400, "mujeres_mg_AI": 2600 },
+      "sodio": { "adultos_mg_AI": 1500, "UL_mg": 2300, "nota": "La NOM-043 recomienda limitar su consumo." },
+      "cobre": { "adultos_ug": 900, "UL_ug": 10000 },
+      "manganeso": { "hombres_mg_AI": 2.3, "mujeres_mg_AI": 1.8, "UL_mg": 11 },
+      "cromo": { "hombres_19_50_ug_AI": 35, "mujeres_19_50_ug_AI": 25 },
+      "molibdeno": { "adultos_ug": 45, "UL_ug": 2000 },
+      "fluoruro": { "hombres_mg_AI": 4, "mujeres_mg_AI": 3, "UL_mg": 10 }
+    }
+  },
+
+  "nutricion_deportiva_CONADE": {
+    "fuente": "CONADE, CNAR, Platos Nutricionales (Vanessa Risoul)",
+    "principios": [
+      "La alimentación debe personalizarse por disciplina, edad, etapa de entrenamiento y composición corporal.",
+      "Se realiza evaluación de estado nutricional: composición corporal, historia clínica, valores bioquímicos, cargas de entrenamiento.",
+      "Se diseñan menús de 8 semanas para alto rendimiento: bajo en sodio, condimentos, grasas, azúcares, sin picantes.",
+      "Se incluyen 3 comidas principales: desayuno, comida, cena."
+    ],
+    "platos_nutricionales": [
+      {
+        "fase": "Entrenamiento ligero / Control de peso",
+        "color": "azul",
+        "distribucion": {
+          "frutas_y_verduras_pct": 50,
+          "cereales_integrales_pct": 25,
+          "proteina_leguminosas_pct": 25
+        },
+        "uso": "Deportistas amateurs, días de descanso o entrenamiento ligero."
+      },
+      {
+        "fase": "Entrenamiento moderado",
+        "color": "amarillo",
+        "distribucion": {
+          "cereales_pct": 33,
+          "verduras_frutas_pct": 33,
+          "proteina_leguminosas_pct": 33
+        },
+        "uso": "Entrenamiento regular 1-2 sesiones/día. Deportes de resistencia.",
+        "nota": "La porción de fruta puede cambiarse por postre o extra."
+      },
+      {
+        "fase": "Entrenamiento intenso / Competencia",
+        "color": "naranja",
+        "distribucion": {
+          "cereales_pct": 50,
+          "verduras_cocidas_pct": 25,
+          "proteina_leguminosas_pct": 25
+        },
+        "uso": "2-3+ sesiones/día o en competencia. Se recomiendan verduras cocidas para digestión rápida.",
+        "nota": "Los cereales aumentan, la proteína NO aumenta proporcionalmente."
+      }
+    ],
+    "nutrientes_criticos_ninos_deportistas": {
+      "calcio": "Esencial para formación ósea. Fuentes: lácteos (leche, yogurt, queso).",
+      "hierro": "Refuerza desarrollo. Fuentes: verduras de hoja verde, frutos secos.",
+      "nota": "No exagerar en pérdida/ganancia de peso; puede afectar el crecimiento."
+    },
+    "hidratacion_deportiva": {
+      "pre_ejercicio": "400-600 mL de agua 2-3 horas antes",
+      "durante_ejercicio": "150-250 mL cada 15-20 minutos",
+      "post_ejercicio": "1.5 L por cada kg de peso perdido",
+      "bebida_deportiva": {
+        "carbohidratos_pct": "6-8",
+        "sodio_mg_por_litro": "500-700",
+        "uso": "Ejercicio >60 minutos o alta intensidad"
+      }
+    },
+    "suplementacion_deportiva_AIS": {
+      "categoria_A_con_evidencia": ["cafeína", "creatina", "bicarbonato de sodio", "beta-alanina", "nitratos (jugo de betabel)"],
+      "categoria_B_en_estudio": ["HMB", "glutamina", "carnitina"],
+      "categoria_C_sin_evidencia": ["tribulus", "ginseng", "CoQ10"],
+      "categoria_D_prohibidos": ["efedrina", "prohormones", "esteroides"],
+      "nota": "Clasificación basada en Australian Institute of Sport (referencia usada por CONADE)."
+    },
+    "taekwondo_protocolo_nutricion": {
+      "descripcion": "La Federación Mexicana de Taekwondo incorporó el protocolo de nutrición del CNAR en su reglamento oficial.",
+      "regla": "Deportistas que no alcancen el peso esperado son excluidos de competencia para proteger su salud."
+    }
+  },
+
+  "condiciones_especiales": {
+    "embarazo": {
+      "energia_extra_kcal": {
+        "primer_trimestre": 0,
+        "segundo_trimestre": 340,
+        "tercer_trimestre": 452
+      },
+      "nutrientes_criticos": {
+        "hierro_mg": 27,
+        "calcio_mg": 1000,
+        "acido_folico_ug_DFE": 600,
+        "vitamina_D_ug": 15,
+        "omega_3_DHA_mg_dia": 200,
+        "yodo_ug": 220
+      },
+      "nota": "Fuente: NOM-043 y DRI. La lactancia materna exclusiva se recomienda los primeros 6 meses."
+    },
+    "lactancia": {
+      "energia_extra_kcal": 500,
+      "nutrientes_criticos": {
+        "calcio_mg": 1000,
+        "acido_folico_ug_DFE": 500,
+        "vitamina_B12_ug": 2.8,
+        "yodo_ug": 290
+      }
+    },
+    "adultos_mayores_60_plus": {
+      "consideraciones": [
+        "Menor gasto energético basal → reducir calorías totales sin comprometer nutrientes.",
+        "Mayor necesidad de proteínas: 1.0-1.2 g/kg/día.",
+        "Vitamina D: 20 µg/día (>70 años).",
+        "Calcio: 1200 mg/día (mujeres >50, hombres >70).",
+        "Vitamina B12: mayor riesgo de malabsorción, considerar suplementación.",
+        "Fibra y agua: prevención de estreñimiento."
+      ]
+    },
+    "diabetes_tipo_2": {
+      "recomendaciones_nutricionales": {
+        "carbohidratos": "45-60% del GET; preferir carbohidratos complejos y de bajo índice glucémico.",
+        "fibra_g_dia": "25-30",
+        "azucares_anadidos": "Limitar al máximo. <10% de la energía total.",
+        "grasas_saturadas_pct_max": 7,
+        "sodio_max_mg_dia": 2000,
+        "control_porciones": "Fundamental. Usar el sistema de equivalentes SMAE."
+      },
+      "criterios_diagnosticos": {
+        "glucosa_ayuno_mg_dL_diabetes": "≥126",
+        "glucosa_ayuno_mg_dL_prediabetes": "100–125",
+        "HbA1c_pct_diabetes": "≥6.5",
+        "HbA1c_pct_control_adecuado": "<7.0"
+      }
+    },
+    "hipertension_arterial": {
+      "dieta_DASH_principios": [
+        "Rica en frutas, verduras, granos integrales.",
+        "Incluye productos lácteos bajos en grasa.",
+        "Incluye pescado, aves, leguminosas, nueces.",
+        "Limitar carne roja, dulces, bebidas azucaradas.",
+        "Sodio: <2300 mg/día (ideal <1500 mg/día).",
+        "Potasio: ~4700 mg/día para efecto hipotensor."
+      ]
+    },
+    "enfermedad_renal_cronica": {
+      "nota": "Requiere supervisión de nefrólogo/nutriólogo. Restricción de proteína, sodio, potasio y fósforo según estadio."
+    }
+  },
+
+  "composicion_alimentos_mexicanos_referencia": {
+    "fuente": "SMAE + USDA FoodData Central (CC0 dominio público). Valores por 100g de porción comestible.",
+    "nota": "Muestra representativa de alimentos comunes en la dieta mexicana. Para la base completa, consultar USDA FDC API: https://fdc.nal.usda.gov/api-spec/fdc_api.html",
+    "alimentos": [
+      { "nombre": "Tortilla de maíz", "energia_kcal": 218, "proteina_g": 5.7, "lipidos_g": 2.8, "carbohidratos_g": 44.6, "fibra_g": 5.4, "calcio_mg": 146, "hierro_mg": 1.6 },
+      { "nombre": "Frijol negro cocido", "energia_kcal": 132, "proteina_g": 8.9, "lipidos_g": 0.5, "carbohidratos_g": 23.7, "fibra_g": 8.7, "hierro_mg": 2.1, "folato_ug": 149 },
+      { "nombre": "Arroz blanco cocido", "energia_kcal": 130, "proteina_g": 2.7, "lipidos_g": 0.3, "carbohidratos_g": 28.2, "fibra_g": 0.4 },
+      { "nombre": "Pechuga de pollo cocida, sin piel", "energia_kcal": 165, "proteina_g": 31.0, "lipidos_g": 3.6, "carbohidratos_g": 0, "hierro_mg": 1.0, "zinc_mg": 1.0, "B12_ug": 0.3 },
+      { "nombre": "Huevo entero cocido", "energia_kcal": 155, "proteina_g": 12.6, "lipidos_g": 10.6, "carbohidratos_g": 1.1, "colesterol_mg": 373, "vitamina_D_ug": 2.0, "B12_ug": 0.9 },
+      { "nombre": "Nopal cocido", "energia_kcal": 16, "proteina_g": 1.3, "lipidos_g": 0.1, "carbohidratos_g": 3.3, "fibra_g": 2.2, "calcio_mg": 164, "vitamina_C_mg": 8.0 },
+      { "nombre": "Aguacate (Hass)", "energia_kcal": 160, "proteina_g": 2.0, "lipidos_g": 14.7, "carbohidratos_g": 8.5, "fibra_g": 6.7, "potasio_mg": 485, "folato_ug": 81 },
+      { "nombre": "Jitomate crudo", "energia_kcal": 18, "proteina_g": 0.9, "lipidos_g": 0.2, "carbohidratos_g": 3.9, "fibra_g": 1.2, "vitamina_C_mg": 14, "licopeno_ug": 2573 },
+      { "nombre": "Chile poblano crudo", "energia_kcal": 20, "proteina_g": 0.9, "lipidos_g": 0.2, "carbohidratos_g": 4.6, "fibra_g": 0.9, "vitamina_C_mg": 80.4, "vitamina_A_ug_RAE": 18 },
+      { "nombre": "Avena en hojuelas", "energia_kcal": 389, "proteina_g": 16.9, "lipidos_g": 6.9, "carbohidratos_g": 66.3, "fibra_g": 10.6, "magnesio_mg": 177, "hierro_mg": 4.7 },
+      { "nombre": "Leche entera de vaca", "energia_kcal": 61, "proteina_g": 3.2, "lipidos_g": 3.3, "carbohidratos_g": 4.8, "calcio_mg": 113, "vitamina_D_ug": 1.3, "B12_ug": 0.4 },
+      { "nombre": "Plátano", "energia_kcal": 89, "proteina_g": 1.1, "lipidos_g": 0.3, "carbohidratos_g": 22.8, "fibra_g": 2.6, "potasio_mg": 358, "B6_mg": 0.4 },
+      { "nombre": "Guayaba", "energia_kcal": 68, "proteina_g": 2.6, "lipidos_g": 1.0, "carbohidratos_g": 14.3, "fibra_g": 5.4, "vitamina_C_mg": 228 },
+      { "nombre": "Mango", "energia_kcal": 60, "proteina_g": 0.8, "lipidos_g": 0.4, "carbohidratos_g": 15.0, "fibra_g": 1.6, "vitamina_A_ug_RAE": 54, "vitamina_C_mg": 36 },
+      { "nombre": "Lenteja cocida", "energia_kcal": 116, "proteina_g": 9.0, "lipidos_g": 0.4, "carbohidratos_g": 20.1, "fibra_g": 7.9, "hierro_mg": 3.3, "folato_ug": 181 },
+      { "nombre": "Sardina en aceite (escurrida)", "energia_kcal": 208, "proteina_g": 24.6, "lipidos_g": 11.5, "carbohidratos_g": 0, "calcio_mg": 382, "omega3_EPA_DHA_g": 1.4, "vitamina_D_ug": 4.8 },
+      { "nombre": "Amaranto (semilla)", "energia_kcal": 371, "proteina_g": 13.6, "lipidos_g": 7.0, "carbohidratos_g": 65.3, "fibra_g": 6.7, "calcio_mg": 159, "hierro_mg": 7.6, "magnesio_mg": 248 },
+      { "nombre": "Chía (semilla)", "energia_kcal": 486, "proteina_g": 16.5, "lipidos_g": 30.7, "carbohidratos_g": 42.1, "fibra_g": 34.4, "calcio_mg": 631, "omega3_ALA_g": 17.8 },
+      { "nombre": "Calabaza (flor)", "energia_kcal": 15, "proteina_g": 1.0, "lipidos_g": 0.1, "carbohidratos_g": 3.3, "fibra_g": 0.5, "vitamina_A_ug_RAE": 52 },
+      { "nombre": "Quelite / Verdolaga", "energia_kcal": 20, "proteina_g": 2.0, "lipidos_g": 0.4, "carbohidratos_g": 3.4, "fibra_g": 1.0, "omega3_ALA_mg": 300, "vitamina_C_mg": 21, "hierro_mg": 2.0 }
+    ]
+  },
+
+  "indice_glucemico_referencia": {
+    "fuente": "Universidad de Sydney — International GI Tables + Foster-Powell et al.",
+    "escala": { "bajo": "<55", "medio": "56-69", "alto": "≥70" },
+    "alimentos_comunes": [
+      { "alimento": "Tortilla de maíz", "IG": 52, "categoria": "bajo" },
+      { "alimento": "Pan blanco (bolillo)", "IG": 75, "categoria": "alto" },
+      { "alimento": "Pan integral", "IG": 53, "categoria": "bajo" },
+      { "alimento": "Arroz blanco", "IG": 73, "categoria": "alto" },
+      { "alimento": "Arroz integral", "IG": 50, "categoria": "bajo" },
+      { "alimento": "Avena en hojuelas", "IG": 55, "categoria": "bajo" },
+      { "alimento": "Frijol negro", "IG": 30, "categoria": "bajo" },
+      { "alimento": "Lenteja", "IG": 29, "categoria": "bajo" },
+      { "alimento": "Papa cocida", "IG": 78, "categoria": "alto" },
+      { "alimento": "Camote cocido", "IG": 44, "categoria": "bajo" },
+      { "alimento": "Plátano maduro", "IG": 62, "categoria": "medio" },
+      { "alimento": "Manzana", "IG": 36, "categoria": "bajo" },
+      { "alimento": "Mango", "IG": 51, "categoria": "bajo" },
+      { "alimento": "Papaya", "IG": 60, "categoria": "medio" },
+      { "alimento": "Sandía", "IG": 76, "categoria": "alto" },
+      { "alimento": "Leche entera", "IG": 27, "categoria": "bajo" },
+      { "alimento": "Yogurt natural", "IG": 36, "categoria": "bajo" },
+      { "alimento": "Refresco (cola)", "IG": 63, "categoria": "medio" },
+      { "alimento": "Miel de abeja", "IG": 61, "categoria": "medio" },
+      { "alimento": "Azúcar (sacarosa)", "IG": 65, "categoria": "medio" },
+      { "alimento": "Amaranto inflado", "IG": 97, "categoria": "alto" }
+    ],
+    "nota": "El IG se modifica por preparación, combinación con otros alimentos (grasa, fibra, proteína) y madurez. La carga glucémica (CG = IG × g_CHO_porcion / 100) es más útil en la práctica clínica."
+  },
+
+  "reglas_sistema_experto": {
+    "descripcion": "Reglas heurísticas para el motor de inferencia del sistema experto de nutrición.",
+    "reglas_clasificacion_IMC": [
+      { "condicion": "IMC < 18.5", "clasificacion": "Bajo peso", "accion": "Evaluar causas. Plan hipercalórico supervisado." },
+      { "condicion": "IMC 18.5–24.9", "clasificacion": "Normal", "accion": "Mantener dieta equilibrada." },
+      { "condicion": "IMC 25.0–29.9", "clasificacion": "Sobrepeso", "accion": "Déficit calórico moderado (300-500 kcal/día). Aumentar actividad física." },
+      { "condicion": "IMC 30.0–34.9", "clasificacion": "Obesidad grado I", "accion": "Déficit calórico (500-750 kcal/día). Usar peso corregido. Derivar a nutriólogo." },
+      { "condicion": "IMC 35.0–39.9", "clasificacion": "Obesidad grado II", "accion": "Plan intensivo. Considerar intervención multidisciplinaria." },
+      { "condicion": "IMC ≥ 40.0", "clasificacion": "Obesidad grado III", "accion": "Derivación obligatoria. Considerar opciones quirúrgicas." }
+    ],
+    "reglas_distribucion_por_objetivo": [
+      {
+        "objetivo": "Pérdida de grasa",
+        "carbohidratos_pct": "40-50",
+        "proteinas_pct": "25-30",
+        "lipidos_pct": "25-30",
+        "deficit_kcal": "500-750",
+        "nota": "Priorizar proteína para preservar masa muscular. Incluir entrenamiento de fuerza."
+      },
+      {
+        "objetivo": "Mantenimiento",
+        "carbohidratos_pct": "45-55",
+        "proteinas_pct": "15-20",
+        "lipidos_pct": "25-35"
+      },
+      {
+        "objetivo": "Ganancia muscular",
+        "carbohidratos_pct": "50-60",
+        "proteinas_pct": "25-30",
+        "lipidos_pct": "15-25",
+        "superavit_kcal": "250-500",
+        "nota": "Requiere entrenamiento de fuerza progresivo."
+      },
+      {
+        "objetivo": "Rendimiento deportivo (resistencia)",
+        "carbohidratos_pct": "55-65",
+        "proteinas_pct": "12-15",
+        "lipidos_pct": "20-30",
+        "carbohidratos_g_por_kg": "6-10",
+        "nota": "Periodizar según fase de entrenamiento (ver platos CONADE)."
+      },
+      {
+        "objetivo": "Control glucémico (diabetes/prediabetes)",
+        "carbohidratos_pct": "40-50",
+        "proteinas_pct": "20-25",
+        "lipidos_pct": "30-35",
+        "nota": "Preferir IG bajo. Distribuir carbohidratos uniformemente. Fibra ≥25g/día."
+      }
+    ],
+    "reglas_tiempos_comida": {
+      "general": {
+        "comidas": 3,
+        "colaciones": 2,
+        "distribucion_ejemplo": {
+          "desayuno_pct": 25,
+          "colacion_am_pct": 10,
+          "comida_pct": 30,
+          "colacion_pm_pct": 10,
+          "cena_pct": 25
+        }
+      },
+      "deportista": {
+        "pre_entrenamiento": "1-3 horas antes: comida rica en carbohidratos complejos, moderada en proteína, baja en grasa y fibra.",
+        "durante_entrenamiento": "Si >60 min: 30-60g carbohidratos/hora via bebida deportiva.",
+        "post_entrenamiento": "En los 30-60 min: 1.0-1.2g CHO/kg + 0.3g proteína/kg. Ratio CHO:PRO de 3:1 a 4:1."
+      }
+    },
+    "reglas_alertas_clinicas": [
+      { "condicion": "Hierro < RDA + mujer premenopáusica", "alerta": "Riesgo de anemia ferropriva. Evaluar hemoglobina. Aumentar fuentes de hierro hemo y vitamina C." },
+      { "condicion": "Calcio < 800 mg/día + mujer >50 años", "alerta": "Riesgo de osteoporosis. Suplementar si dieta insuficiente." },
+      { "condicion": "Folato < 400 µg/día + mujer en edad fértil", "alerta": "Riesgo de defectos del tubo neural. Suplementar ácido fólico." },
+      { "condicion": "Sodio > 2300 mg/día + hipertensión", "alerta": "Reducir sodio a <1500 mg/día." },
+      { "condicion": "Proteína > 2.5 g/kg/día", "alerta": "Ingesta excesiva. Evaluar función renal." },
+      { "condicion": "Fibra < 15 g/día", "alerta": "Ingesta muy baja. Asociada a estreñimiento, disbiosis y riesgo cardiovascular." },
+      { "condicion": "Vitamina D < 15 µg/día + exposición solar limitada", "alerta": "Considerar suplementación." },
+      { "condicion": "GET_calculado < 1200 kcal (mujeres) o < 1500 kcal (hombres)", "alerta": "Dieta muy baja en calorías. Riesgo de deficiencias nutricionales. Requiere supervisión médica." }
+    ]
+  },
+
+  "api_externas_recomendadas": {
+    "descripcion": "APIs y fuentes de datos para enriquecer el sistema experto con información actualizada.",
+    "USDA_FoodData_Central": {
+      "url_base": "https://api.nal.usda.gov/fdc/v1/",
+      "endpoints": {
+        "buscar_alimento": "/foods/search?query={query}&api_key={API_KEY}",
+        "detalle_alimento": "/food/{fdcId}?api_key={API_KEY}",
+        "lista_alimentos": "/foods/list?api_key={API_KEY}"
+      },
+      "licencia": "CC0 1.0 — Dominio público",
+      "registro_api_key": "https://api.nal.usda.gov/fdc/v1/",
+      "nota": "Base de >400,000 alimentos. Valores por 100g. Incluye Foundation Foods, SR Legacy y Branded Foods."
+    },
+    "SMAE_Digital": {
+      "url": "https://www.sistemadigitaldealimentos.org/",
+      "descripcion": "Sistema digital basado en SMAE + USDA. 8 grupos de alimentos con equivalentes. Peso neto y cocido."
+    },
+    "IDEAS_ENSANUT": {
+      "url": "https://ensanut.insp.mx/",
+      "descripcion": "Tablero en línea del INSP con datos de salud y nutrición poblacional mexicana desde 2000."
+    }
+  },
+
+  "plantilla_plan_alimentario": {
+    "descripcion": "Estructura base para generar un plan de alimentación personalizado.",
+    "inputs_requeridos": [
+      "sexo",
+      "edad",
+      "peso_kg",
+      "talla_cm",
+      "nivel_actividad_fisica",
+      "objetivo (pérdida, mantenimiento, ganancia, rendimiento deportivo, control glucémico)",
+      "condiciones_medicas (diabetes, hipertensión, ERC, embarazo, lactancia, etc.)",
+      "alergias_intolerancias",
+      "preferencias_alimentarias (vegetariano, vegano, omnívoro, etc.)",
+      "presupuesto (bajo, medio, alto)",
+      "region_mexico (para alimentos locales)"
+    ],
+    "proceso_calculo": [
+      "1. Calcular IMC = Peso / (Talla_m)²",
+      "2. Clasificar estado nutricional según OMS",
+      "3. Calcular GEB con fórmula apropiada (Mifflin-St Jeor para adultos con sobrepeso; Harris-Benedict general; FAO/OMS para niños)",
+      "4. Aplicar factor de actividad física → GET",
+      "5. Ajustar GET según objetivo (déficit/superávit/mantenimiento)",
+      "6. Distribuir macronutrientes según objetivo y condiciones",
+      "7. Convertir gramos de macronutrientes a equivalentes SMAE",
+      "8. Distribuir equivalentes en tiempos de comida",
+      "9. Asignar alimentos específicos respetando preferencias, disponibilidad regional y presupuesto",
+      "10. Verificar cobertura de micronutrientes críticos contra DRI",
+      "11. Generar alertas clínicas si aplica",
+      "12. Generar menú semanal con variaciones diarias"
+    ],
+    "output_esperado": {
+      "resumen_nutricional": "GET, distribución macro, equivalentes por grupo",
+      "menu_diario": "Desayuno, colación AM, comida, colación PM, cena — con alimentos, porciones y preparación",
+      "menu_semanal": "7 días con variaciones para cubrir variedad nutricional",
+      "lista_compras": "Agrupada por categoría, con cantidades semanales",
+      "alertas": "Deficiencias potenciales, interacciones con medicamentos, notas clínicas"
+    }
+  }
+}

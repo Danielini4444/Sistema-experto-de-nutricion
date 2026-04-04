@@ -1,0 +1,37 @@
+# UTF-8
+#
+# For more details about fixed file info 'ffi' see:
+# http://msdn.microsoft.com/en-us/library/ms646997.aspx
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 0, 0, 0),
+    prodvers=(1, 0, 0, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo(
+      [
+        StringTable(
+          u'040904B0',
+          [
+            StringStruct(u'CompanyName', u'Daniel D\u00edaz Rojas'),
+            StringStruct(u'FileDescription', u'Sistema Experto de Nutrici\u00f3n - M\u00e9xico'),
+            StringStruct(u'FileVersion', u'1.0.0.0'),
+            StringStruct(u'InternalName', u'NutriExperto_MX'),
+            StringStruct(u'LegalCopyright', u'Copyright \u00a9 2026 Daniel D\u00edaz Rojas. MIT License.'),
+            StringStruct(u'OriginalFilename', u'NutriExperto_MX.exe'),
+            StringStruct(u'ProductName', u'NutriExperto MX'),
+            StringStruct(u'ProductVersion', u'1.0.0.0'),
+            StringStruct(u'Comments', u'Sistema experto de nutrici\u00f3n basado en NOM-043, SMAE, FAO/OMS, DRI, ENSANUT.'),
+          ]
+        )
+      ]
+    ),
+    VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
+  ]
+)
